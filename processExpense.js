@@ -28,6 +28,7 @@ const getStoreName = (key) => {
     far: "farmacia",
     ropa: "ropa",
     gaso: "gasoil",
+    otro: "otros",
   };
 
   return stores[key.substring(1)];

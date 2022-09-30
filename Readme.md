@@ -15,3 +15,5 @@ The BOT has a series of commands which represent different stores/monthly-expens
 ### 3 - Copy this google sheet
 
 ### 4 - Customize it
+
+### 5 - How to run it on a Raspberry Pi
