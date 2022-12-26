@@ -14,7 +14,7 @@ const appendDataToSpreadsheet = async (spreadsheetId, range, dataArray) => {
   };
 
   try {
-    await gsapi.spreadsheets.values.append(request);    
+    await gsapi.spreadsheets.values.append(request);
   } catch (err) {
     console.error(err);
   }
@@ -27,26 +27,27 @@ const getStoreName = (key) => {
     super: "supermercado",
     far: "farmacia",
     ropa: "ropa",
-    gaso: "gasoil",
     otro: "otros",
+    auto: "gastos auto",
+    sal: "salidas",
+    viat: "viaticos",
+    mant: "mantenimiento",
   };
 
   return stores[key.substring(1)];
 };
 
 const processExpense = (ctx) => {
-  
   const arr = ctx.message.text.split(" "),
-        amount = arr[1],
-        storeName = getStoreName(arr[0]),
-        comment = arr.slice(2).join(" ") || "",
-        now = dayjs().format("DD/MM/YYYY");
+    amount = arr[1],
+    storeName = getStoreName(arr[0]),
+    comment = arr.slice(2).join(" ") || "",
+    now = dayjs().format("DD/MM/YYYY");
 
   if (isNaN(amount)) {
     ctx.reply(`Ingrese un numero válido separando los decimales con un punto`);
     return;
   }
-
 
   appendDataToSpreadsheet(process.env.SPREADSHEET_ID, "registro!A2:C", [
     [now, storeName, amount, comment],
