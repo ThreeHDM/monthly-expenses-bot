@@ -37,6 +37,46 @@ const getStoreName = (key) => {
   return stores[key.substring(1)];
 };
 
+const getCurrentMonthTotal = async (spreadsheetId, range) => {
+  const gsapi = google.sheets({ version: "v4", auth: client });
+
+  const monthRowArray = {
+    january: "B",
+    february: "C",
+    march: "D",
+    april: "E",
+    may: "F",
+    june: "G",
+    july: "H",
+    august: "I",
+    september: "J",
+    october: "K",
+    november: "L",
+    december: "M",
+  }
+
+  const month = dayjs().format("MMMM").toLowerCase();
+  const row = monthRowArray[month];
+
+  const request = {
+    spreadsheetId,
+    range: `gastosMensuales!${row}14`
+  };
+
+  try {
+    const response = await gsapi.spreadsheets.values.get(request);
+    const values = response.data.values;
+    const total = values.reduce((acc, curr) => {
+      return acc + parseFloat(curr[2]);
+    }, 0);
+
+    return total;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
 const processExpense = (ctx) => {
   const arr = ctx.message.text.split(" "),
     amount = arr[1],
@@ -53,8 +93,10 @@ const processExpense = (ctx) => {
     [now, storeName, amount, comment],
   ]);
 
+  const total = getCurrentMonthTotal(process.env.SPREADSHEET_ID, "gastosMensuales!B14");
+
   ctx.reply(
-    `Número ingresado: ${amount} para rubro: ${storeName} en fecha ${now}`
+    `Número ingresado: ${amount} para rubro: ${storeName} en fecha ${now}. Total del mes: ${total}`
   );
 };
 
