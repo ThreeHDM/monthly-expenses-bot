@@ -65,19 +65,20 @@ const getCurrentMonthTotal = async (spreadsheetId, range) => {
 
   try {
     const response = await gsapi.spreadsheets.values.get(request);
+    
     const values = response.data.values;
-    const total = values.reduce((acc, curr) => {
-      return acc + parseFloat(curr[2]);
-    }, 0);
+
+    const total = values[0][0]
 
     return total;
+
   } catch (err) {
     console.error(err);
   }
 };
 
 
-const processExpense = (ctx) => {
+const processExpense = async (ctx) => {
   const arr = ctx.message.text.split(" "),
     amount = arr[1],
     storeName = getStoreName(arr[0]),
@@ -89,14 +90,16 @@ const processExpense = (ctx) => {
     return;
   }
 
-  appendDataToSpreadsheet(process.env.SPREADSHEET_ID, "registro!A2:C", [
+  await appendDataToSpreadsheet(process.env.SPREADSHEET_ID, "registro!A2:C", [
     [now, storeName, amount, comment],
   ]);
 
-  const total = getCurrentMonthTotal(process.env.SPREADSHEET_ID, "gastosMensuales!B14");
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // wait for the spreadsheet to update
+
+  const total = await getCurrentMonthTotal(process.env.SPREADSHEET_ID, "gastosMensuales!B14");
 
   ctx.reply(
-    `Número ingresado: ${amount} para rubro: ${storeName} en fecha ${now}. Total del mes: ${total}`
+    `Número ingresado: ${amount} para rubro: ${storeName} en fecha ${now}. Total del mes hasta ahora: ${total}`
   );
 };
 
