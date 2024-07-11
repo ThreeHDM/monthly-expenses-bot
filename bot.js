@@ -1,7 +1,7 @@
 const { Telegraf } = require("telegraf");
 
 const bot = new Telegraf(process.env.BOT_TOKEN, {
-	handlerTimeout: 5000
+	handlerTimeout: 20000
 })
 
 const processExpense = require("./processExpense.js");
