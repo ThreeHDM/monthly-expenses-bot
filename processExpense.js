@@ -85,6 +85,12 @@ const processExpense = async (ctx) => {
     comment = arr.slice(2).join(" ") || "",
     now = dayjs().format("DD/MM/YYYY");
 
+  //check if amout has a dot
+  if (amount.includes(".")) {
+    ctx.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
+    return;
+  }
+
   if (isNaN(amount.replace(",", "."))) {
     ctx.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
     return;
