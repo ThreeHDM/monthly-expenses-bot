@@ -65,7 +65,7 @@ const getCurrentMonthTotal = async (spreadsheetId, range) => {
 
   try {
     const response = await gsapi.spreadsheets.values.get(request);
-    
+
     const values = response.data.values;
 
     const total = values[0][0]
@@ -85,8 +85,8 @@ const processExpense = async (ctx) => {
     comment = arr.slice(2).join(" ") || "",
     now = dayjs().format("DD/MM/YYYY");
 
-  if (isNaN(amount)) {
-    ctx.reply(`Ingrese un numero válido separando los decimales con un punto`);
+  if (isNaN(amount.replace(",", "."))) {
+    ctx.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
     return;
   }
 
