@@ -86,7 +86,7 @@ const processExpense = async (ctx) => {
     now = dayjs().format("DD/MM/YYYY");
 
   //check if amout has a dot
-  if (amount.includes(".")) {
+  if (amount?.includes(".")) {
     ctx.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
     return;
   }
