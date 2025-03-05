@@ -26,7 +26,9 @@ bot.catch((err) => {
 const restartBot = async () => {
   try {
     console.log("Intentando reiniciar el bot...");
-    await bot.stop();
+    if (bot.botInfo) {
+      await bot.stop();
+    }
     await bot.launch();
     console.log("Bot reiniciado con éxito.");
   } catch (error) {
