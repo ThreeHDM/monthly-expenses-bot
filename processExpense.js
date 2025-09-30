@@ -85,8 +85,14 @@ const processExpense = async (ctx) => {
     comment = arr.slice(2).join(" ") || "",
     now = dayjs().format("DD/MM/YYYY");
 
+  //check if amount is provided and valid
+  if (!amount) {
+    ctx.reply(`Por favor ingrese un monto. Ejemplo: /ver 100,50`);
+    return;
+  }
+
   //check if amout has a dot
-  if (amount?.includes(".")) {
+  if (amount.includes(".")) {
     ctx.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
     return;
   }
