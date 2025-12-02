@@ -7,14 +7,12 @@ WORKDIR /app
 # Copy package.json and package-lock.json into the container
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install production dependencies only
+RUN npm ci --only=production
 
-# Copy the entire project into the container
-COPY . .
+# Copy the application files
+COPY bot.js processExpense.js googleClient.js ./
+COPY keys.json ./
 
-# Expose the port (if your bot listens to a webhook)
-EXPOSE 3000
-
-# Start the bot
+# Start the Discord bot
 CMD ["npm", "start"]
