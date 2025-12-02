@@ -34,7 +34,7 @@ const getStoreName = (key) => {
     mant: "mantenimiento",
   };
 
-  return stores[key.substring(1)];
+  return stores[key];
 };
 
 const getCurrentMonthTotal = async (spreadsheetId, range) => {
@@ -78,27 +78,29 @@ const getCurrentMonthTotal = async (spreadsheetId, range) => {
 };
 
 
-const processExpense = async (ctx) => {
-  const arr = ctx.message.text.split(" "),
-    amount = arr[1],
-    storeName = getStoreName(arr[0]),
-    comment = arr.slice(2).join(" ") || "",
-    now = dayjs().format("DD/MM/YYYY");
+const processExpense = async (message) => {
+  // Parse the Discord message content
+  const arr = message.content.split(" ");
+  const command = arr[0].substring(1); // Remove the "/" from the command
+  const amount = arr[1];
+  const storeName = getStoreName(command);
+  const comment = arr.slice(2).join(" ") || "";
+  const now = dayjs().format("DD/MM/YYYY");
 
   //check if amount is provided and valid
   if (!amount) {
-    ctx.reply(`Por favor ingrese un monto. Ejemplo: /ver 100,50`);
+    message.reply(`Por favor ingrese un monto. Ejemplo: /ver 100,50`);
     return;
   }
 
-  //check if amout has a dot
+  //check if amount has a dot
   if (amount.includes(".")) {
-    ctx.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
+    message.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
     return;
   }
 
   if (isNaN(amount.replace(",", "."))) {
-    ctx.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
+    message.reply(`Ingrese un numero válido separando los decimales con una coma. Ejemplo: /ver 100,50`);
     return;
   }
 
@@ -110,7 +112,7 @@ const processExpense = async (ctx) => {
 
   const total = await getCurrentMonthTotal(process.env.SPREADSHEET_ID, "gastosMensuales!B14");
 
-  ctx.reply(
+  message.reply(
     `Número ingresado: ${amount} para rubro: ${storeName} en fecha ${now}. Total del mes hasta ahora: ${total}`
   );
 };
