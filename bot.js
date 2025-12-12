@@ -76,6 +76,9 @@ client.on("interactionCreate", async (interaction) => {
   // Check if it's one of our expense commands
   if (commands.includes(commandName)) {
     try {
+      // Defer the reply immediately to prevent timeout
+      await interaction.deferReply();
+
       const amount = interaction.options.getString('monto');
       const comment = interaction.options.getString('comentario') || '';
 
@@ -83,7 +86,7 @@ client.on("interactionCreate", async (interaction) => {
       const fakeMessage = {
         content: `/${commandName} ${amount} ${comment}`.trim(),
         reply: async (content) => {
-          await interaction.reply(content);
+          await interaction.editReply(content);
         },
         channel: interaction.channel,
         author: interaction.user
@@ -92,7 +95,11 @@ client.on("interactionCreate", async (interaction) => {
       await processExpense(fakeMessage);
     } catch (error) {
       console.error("Error processing slash command:", error);
-      await interaction.reply("Ocurrió un error al procesar el comando. Por favor, intenta nuevamente.");
+      if (interaction.deferred) {
+        await interaction.editReply("Ocurrió un error al procesar el comando. Por favor, intenta nuevamente.");
+      } else {
+        await interaction.reply("Ocurrió un error al procesar el comando. Por favor, intenta nuevamente.");
+      }
     }
   }
 });
